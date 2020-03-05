@@ -25,7 +25,7 @@ end
 
 local C = minetest.colorize
 
-function civchat.on_chat_message(from, msg, global_message)
+function civchat.on_chat_message(from, msg, global_message, formatter)
    if not minetest.check_player_privs(from, {shout = true}) then
       return false
    end
@@ -64,21 +64,12 @@ function civchat.on_chat_message(from, msg, global_message)
 
          -- Send message
          if res then
-            minetest.chat_send_player(to, C(from_color, from .. ": ") .. msg)
+            minetest.chat_send_player(to, formatter(from, from_color, msg))
          end
       elseif minetest.features.no_chat_message_prediction then
-         minetest.chat_send_player(from, C(from_color, from .. ": ") .. msg)
+         minetest.chat_send_player(from, formatter(from, from_color, msg))
       end
       ::continue::
    end
    return true
 end
-
-
-minetest.register_on_chat_message(function(from, msg)
-   if msg:sub(1, 1) == "/" then
-      return false
-   end
-
-   return civchat.on_chat_message(from, msg, false)
-end)

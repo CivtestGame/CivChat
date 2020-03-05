@@ -5,6 +5,7 @@ civchat = {}
 dofile(modpath .. "api.lua")
 dofile(modpath .. "pm.lua")
 dofile(modpath .. "handlers.lua")
+dofile(modpath .. "chat.lua")
 
 minetest.log("[CivChat] Loaded CivChat.")
 

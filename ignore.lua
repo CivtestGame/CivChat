@@ -60,6 +60,12 @@ minetest.register_chatcommand(
             return false, "Please specify a player to unignore."
          end
          civchat.player_ignores[name][param] = nil
+
+         -- Clean up empty ignore lists
+         if next(civchat.player_ignores[name]) == nil then
+            civchat.player_ignores[name] = nil
+         end
+
          return true, "Player '" .. param .. "' was removed from your ignore list."
       end
    }

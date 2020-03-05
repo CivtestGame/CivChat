@@ -1,7 +1,36 @@
 
+-- Ignore list persistence
+
 local storage = minetest.get_mod_storage()
 
 civchat.player_ignores = {}
+
+function civchat.save_ignores()
+    storage:set_string("ignores", minetest.serialize(civchat.player_ignores))
+    minetest.debug("[CivChat] Saved ignore lists.")
+end
+
+function civchat.load_ignores()
+    civchat.player_ignores = minetest.deserialize(storage:get_string("ignores"))
+    civchat.player_ignores = civchat.player_ignores or {}
+    minetest.debug("[CivChat] Saved ignore lists.")
+end
+
+civchat.load_ignores()
+
+minetest.register_on_shutdown(civchat.save_ignores)
+
+local timer = 0
+minetest.register_globalstep(function(dtime)
+      timer = timer + dtime
+      if timer < 60 * 10 then
+         return
+      end
+      timer = 0
+      civchat.save_ignores()
+end)
+
+-- Commands
 
 minetest.register_chatcommand(
    "ignore",

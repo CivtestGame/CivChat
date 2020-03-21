@@ -13,10 +13,11 @@ core.register_chatcommand("msg",
          if not sendto then
             return false, "Invalid usage, see /help msg."
          end
-         if not core.get_player_by_name(sendto) then
-            return false, "The player " .. sendto
-               .. " is not online."
+         local sendto_obj = core.get_player_by_name(sendto)
+         if not sendto_obj then
+            return false, "The player " .. sendto .. " is not online."
          end
+         sendto = sendto_obj:get_player_name()
          player_last_messaged[name] = sendto
          local color_from = civchat.get_player_name_color(name) or "#f0f"
          local color_sendto = civchat.get_player_name_color(sendto) or "#f0f"

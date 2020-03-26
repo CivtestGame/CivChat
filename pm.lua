@@ -42,7 +42,9 @@ core.register_chatcommand("r",
          if not sendto then
             return false, "You have not messaged someone."
          end
-
+         if not message or message == "" then
+            return false, "Cannot send an empty message."
+         end
          if not core.get_player_by_name(sendto) then
             return false, "The player " .. sendto .. " is not online."
          end

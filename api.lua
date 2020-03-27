@@ -31,17 +31,19 @@ function civchat.on_chat_message(from, msg, global_message, formatter)
    end
 
    local from_color = civchat.get_player_name_color(from) or "#fff"
+   local from_player = minetest.get_player_by_name(from)
 
    local objects = {}
 
    if global_message then
       objects = minetest.get_connected_players()
    else
-      local from_player = minetest.get_player_by_name(from)
       objects = minetest.get_objects_inside_radius(
          from_player:get_pos(), chat_radius
       )
    end
+
+   local found_player_in_radius = false
 
    -- Loop through possible receivers
    for _,object in ipairs(objects) do
@@ -53,6 +55,7 @@ function civchat.on_chat_message(from, msg, global_message, formatter)
       local to = player:get_player_name()
 
       if to ~= from then
+         found_player_in_radius = true
          -- Run handlers
          local res = true
          for i, handler in ipairs(civchat.handlers) do
@@ -71,5 +74,21 @@ function civchat.on_chat_message(from, msg, global_message, formatter)
       end
       ::continue::
    end
+
+   if not found_player_in_radius then
+      local meta = from_player:get_meta()
+      local time = os.time(os.date("!*t"))
+
+      -- probably need an API for this, instead of reusing the OTP timer
+      if meta:get("onetimetp")
+         and meta:get_int("onetimetp") + 3600 > time
+      then
+         minetest.chat_send_player(
+            from, "Nobody is nearby to see your message. Instead, try "
+               .. "directly messaging someone: '/msg <player> <message>'"
+         )
+      end
+   end
+
    return true
 end

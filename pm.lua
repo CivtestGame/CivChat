@@ -19,6 +19,8 @@ core.register_chatcommand("msg",
          end
          sendto = sendto_obj:get_player_name()
          player_last_messaged[name] = sendto
+         player_last_messaged[sendto] = player_last_messaged[sendto] or name
+
          local color_from = civchat.get_player_name_color(name) or "#f0f"
          local color_sendto = civchat.get_player_name_color(sendto) or "#f0f"
          core.chat_send_player(
